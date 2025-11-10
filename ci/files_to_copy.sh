@@ -14,4 +14,3 @@ cp -R build/etc/acdbdata/qcs9100/*  /tmp/rootfs/etc/acdbdata/qcs9100/
 cp -R build/etc/acdbdata/qcs9075/*  /tmp/rootfs/etc/acdbdata/qcs9075/
 
 
-# Sample test 
