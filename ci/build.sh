@@ -22,3 +22,5 @@ cp -r qcom/qcm6490/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcm6490_rb3
 cp -r qcom/qcs8300/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs8300/
 cp -r qcom/qcs9100/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9100/
 cp -r qcom/qcs9075/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9075/
+
+# sample test
