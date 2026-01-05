@@ -13,12 +13,14 @@ mkdir ${GITHUB_WORKSPACE}/build
 mkdir ${GITHUB_WORKSPACE}/build/etc
 mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata
 mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcm6490_rb3
+mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs615
 mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs8300
 mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9075
 mkdir ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9100
 
 cp -r qcom/qli/qcm6490/card-defs.xml ${GITHUB_WORKSPACE}/build/etc/
 cp -r qcom/qli/qcm6490/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcm6490_rb3/
+cp -r qcom/qli/qcs615/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs615/
 cp -r qcom/qli/qcs8300/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs8300/
 cp -r qcom/qli/qcs9100/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9100/
 cp -r qcom/qli/qcs9075/acdbdata/* ${GITHUB_WORKSPACE}/build/etc/acdbdata/qcs9075/

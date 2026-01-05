@@ -38,6 +38,7 @@ AC_CONFIG_FILES([Makefile])
 AM_COND_IF([VENDOR_QCOM],
         [AC_CONFIG_FILES([qcom/Makefile qcom/kvh2xml.pc \
                           qcom/qli/qcm6490/Makefile qcom/qli/qcm6490/config.pc \
+                          qcom/qli/qcs615/Makefile qcom/qli/qcs615/config.pc \
                           qcom/qli/qcs8275/Makefile qcom/qli/qcs8275/config.pc \
                           qcom/qli/qcs8300/Makefile qcom/qli/qcs8300/config.pc \
                           qcom/qli/qcs9100/Makefile qcom/qli/qcs9100/config.pc \

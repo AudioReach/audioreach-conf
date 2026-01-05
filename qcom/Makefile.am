@@ -7,4 +7,4 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = kvh2xml.pc
 EXTRA_DIST = $(pkgconfig_DATA)
 
-SUBDIRS = qli/qcm6490 qli/qcs8275 qli/qcs8300 qli/qcs9100 qli/qcs9075
+SUBDIRS = qli/qcm6490 qli/qcs615 qli/qcs8275 qli/qcs8300 qli/qcs9100 qli/qcs9075
