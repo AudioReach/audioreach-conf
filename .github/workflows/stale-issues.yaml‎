@@ -1,0 +1,17 @@
+github-actions: align stale workflow with OSSOps recommendations
+
+This update brings the stale-issues GitHub workflow into alignment with
+OSSOps-recommended settings. The changes improve the handling of stale
+issues and pull requests, ensure maintainers are notified when items
+become stale, and prevent premature closure of open work. These updates
+help maintain consistent triage behavior across Qualcomm-hosted
+open-source projects.
+
+Changes included:
+- Set a 30-day threshold for marking issues and PRs as stale.
+- Notify the appropriate team when an item becomes stale.
+- Prevent automatic closure of stale issues and PRs.
+- Improve consistency with Qualcomm open-source automation templates.
+
+These changes enhance project hygiene and ensure the workflow follows
+Qualcomm’s open-source best practices.
