@@ -1,5 +1,6 @@
---build=x86_64-linux
---host=aarch64-poky-linux
+-build=x86_64-linux
+--host=aarch64-qcom-linux
+--target=aarch64-qcom-linux
 --prefix=/usr
 --exec_prefix=/usr
 --bindir=/usr/bin
@@ -17,3 +18,4 @@
 --disable-silent-rules
 --disable-dependency-tracking
 --disable-static
+--with-qcom
