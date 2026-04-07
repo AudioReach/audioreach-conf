@@ -33,7 +33,8 @@ AC_CONFIG_FILES([ \
     qcs8300/Makefile qcs8300/config.pc \
     qcs9100/Makefile qcs9100/config.pc \
     qcs9075/Makefile qcs9075/config.pc \
-    sm8750/Makefile  sm8750/config.pc
+    sm8750/Makefile  sm8750/config.pc \
+    shikra/Makefile  shikra/config.pc
     ])
 
 AC_OUTPUT
