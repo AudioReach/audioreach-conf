@@ -5,7 +5,6 @@
  * kvh2xml.h
  *
  * This header file defines the keys to be used in acdbdata.
- *
  */
 
  #ifndef __KVH_2_XML_H__
