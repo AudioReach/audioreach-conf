@@ -4,6 +4,7 @@
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 set -ex
 
+
 PREBUILD_SCRIPT_PATH="${PREBUILD_SCRIPT:-$(dirname "${BASH_SOURCE[0]}")/pre_build.sh}"
 source "$PREBUILD_SCRIPT_PATH"
 
