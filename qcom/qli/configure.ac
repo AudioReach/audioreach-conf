@@ -43,7 +43,9 @@ AC_CONFIG_FILES([ \
     GLYMUR/Makefile  GLYMUR/config.pc \
     MAHUA/Makefile   MAHUA/config.pc \
     Kaanapali/Makefile Kaanapali/config.pc \
-    X1E80100/Makefile X1E80100/config.pc
+    X1E80100/Makefile X1E80100/config.pc \
+    shikra_cqs/Makefile shikra_cqs/config.pc \
+    shikra_iqs/Makefile shikra_iqs/config.pc
     ])
 
 AC_OUTPUT
