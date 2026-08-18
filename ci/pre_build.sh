@@ -41,6 +41,7 @@ if [ ! -d "${GITHUB_WORKSPACE}/install" ]; then
     echo "Running SDK script..."
     if echo "./install" | ./"${SDK_NAME}" ; then
         echo "SDK Script ran successfully."
+        
     else
         echo "Error running SDK script. Exiting."
         exit 1
