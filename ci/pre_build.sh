@@ -5,6 +5,7 @@
 set -euo pipefail
 echo "Running pre-build script..."
 
+
 # Define target_image.json url
 url="https://raw.githubusercontent.com/AudioReach/audioreach-workflows/master/.github/actions/loading/target_image.json"
 
