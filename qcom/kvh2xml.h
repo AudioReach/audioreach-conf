@@ -80,6 +80,7 @@ enum AllKeyIds{
     TAG_KEY_ULTRASOUND_GAIN     = 0xE7000000,   /**< @h2xmle_name{UltrasoundGain} */
     PROXY_RX_TYPE               = 0xE7010000,   /**< @h2xmle_name{ProxyRxType} */
     MMA_MODEL_TYPE              = 0xE7030000,   /**< @h2xmle_name{MMA_MODEL_TYPE} */
+    TRANSLATION_RX_GAIN_VALUES  = 0xE7050000,   /**< @h2xmle_name{TranslationRxGain} */
 };
 
 
@@ -368,6 +369,7 @@ enum Key_Values_DevicePP_Tx {
     DEVICEPP_TX_EC_REF                          = 0xAD000030,   /**< @h2xmle_name {Record_Echo_Ref_Mux} @h2xmle_description {Mux Capture data and Ec Ref}*/
     DEVICEPP_TX_AUDIO_FLUENCE_FFECNS            = 0xAD000032,   /**< @h2xmle_name {Audio_Fluence_FFECNS} @h2xmle_description {Fluence FFECNS record use case.}*/
     DEVICEPP_TX_FLUENCE_SMECNS_OFFLOAD          = 0xAD000036,   /**< @h2xmle_name {Fluence_SMECNS_Offload} @h2xmle_description {Single mic ECNS offload}*/
+    DEVICEPP_TX_AUDIO_ZOOM                      = 0xAD000039,   /**< @h2xmle_name {Audio_ZOOM} @h2xmle_description {CamCorder record use case with AudioZoom support.}*/
 };
 
 /**
@@ -842,6 +844,18 @@ enum Key_Values_UltrasoundGain {
 };
 
 /**
+    @h2xmlk_key         {TRANSLATION_RX_GAIN_VALUES}
+    @h2xmlk_description {TranslationRxGain}
+*/
+enum Key_Values_TranslationRxGain {
+    GAIN_HANDSET    = 0xE7050001,   /**< @h2xmle_name {Handset_Gain} @h2xmle_description {Set Gain Value for Handset for Call Translation RX MFC}*/
+    GAIN_SPEAKER    = 0xE7050002,   /**< @h2xmle_name {Speaker_Gain} @h2xmle_description {Set Gain Value for Speaker for Call Translation RX MFC}*/
+    GAIN_HEADPHONE  = 0xE7050003,   /**< @h2xmle_name {Headphone_Gain} @h2xmle_description {Set Gain Value for Headphone for Call Translation RX MFC}*/
+    GAIN_USB        = 0xE7050004,   /**< @h2xmle_name {USB_Gain} @h2xmle_description {Set Gain Value for USB for Call Translation RX MFC}*/
+    GAIN_BT         = 0xE7050005,   /**< @h2xmle_name {BT_Gain} @h2xmle_description {Set Gain Value for BT for Call Translation RX MFC}*/
+};
+
+/**
     @h2xmlk_key         {PROXY_RX_TYPE}
     @h2xmlk_description {Key for proxy record type}
     @range              {0xE7010001..0xE701FFFF}
@@ -859,6 +873,7 @@ enum Key_Values_ProxyRxType {
 enum Key_Values_MMA_MODEL_TYPE {
     MMA_NVD = 0xE7030001,   /**< @h2xmle_name {MMA_NVD} @h2xmle_description {Value to indicate NVD model being used in MMA usecase}*/
     MMA_VAD = 0xE7030002,   /**< @h2xmle_name {MMA_VAD} @h2xmle_description {Value to indicate VAD model being used in MMA usecase}*/
+    MMA_VAD_ILD = 0xE7030003,   /**< @h2xmle_name {MMA_VAD_ILD} @h2xmle_description {Value to indicate VAD model with ILD enabled in MMA usecase}*/
 };
 
 /**
@@ -1002,7 +1017,9 @@ enum Tag_Definitions {
     TAG_MODULE_SDZ                  = 0xC0000064, /**< @h2xmle_name {"module_sdz"} @h2xmle_description {Tag to be used to identify the MIID of speaker diarization module} */
     MODULE_SA_HDT                   = 0xC0000066, /**< @h2xmle_name {"module_sa_hdt"} @h2xmle_description {Tag to be used to identify the MIID of spatializer headtracking module} */
     MODULE_SPATIAL_AUDIO            = 0xC0000067, /**< @h2xmle_name {"module_spatial_audio"} @h2xmle_description {Tag to be used to identify the MIID of spatializer module} */
+    TAG_AUDIO_ZOOM                  = 0xC000006B, /**< @h2xmle_name {"audio_zoom_miqster"} @h2xmle_description {Tag to be used to set audio zoom factor on miqster module} */
     TAG_VOICE_NS_RX_CONFIG          = 0xC000006C, /**< @h2xmle_name {"module_voice_ns_rx_config"} @h2xmle_description {Tag to be used to set dynamic transition mode on FNN_NS module} */
+    TAG_TRANSLATION_RX_GAIN         = 0xC0000068, /**< @h2xmle_name {"translation_rx_gain"} @h2xmle_description {Use this tag to control translation rx volume based on the device.} */
 };
 typedef enum Tag_Definitions Tag_Definitions;
 
