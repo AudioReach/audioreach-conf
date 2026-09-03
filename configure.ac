@@ -49,11 +49,9 @@ AC_CONFIG_FILES([ \
         linux/Makefile \
         linux/kvh2xml.pc \
         linux/reference/Makefile \
-        linux/reference/config.pc \
         nxp/Makefile \
         nxp/kvh2xml.pc \
-        nxp/reference/Makefile \
-        nxp/reference/config.pc
+        nxp/reference/Makefile 
         ])
 
 
