@@ -12,5 +12,5 @@ config_acdbdata_DATA = $(config_acdbdata)
 
 config_carddef = card-defs.xml
 
-config_carddefdir = $(sysconfdir)
+config_carddefdir = $(audioreachconfdir)
 config_carddef_DATA = $(config_carddef)
