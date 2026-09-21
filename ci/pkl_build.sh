@@ -14,6 +14,8 @@ if [ -z "${BUILD_ARGS}" ]; then
     BUILD_ARGS="$(sed -E 's/#.*$//' "$BUILD_OPTIONS_FILE" | sed '/^[[:space:]]*$/d' | tr '\n' ' ')"
 fi
 
+# sample test
+
 echo "Running build script..."
 
 # Build/Compile audioreach-conf
