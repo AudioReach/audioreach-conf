@@ -46,7 +46,8 @@ AC_CONFIG_FILES([ \
     X1E80100/Makefile X1E80100/config.pc \
     nord/Makefile nord/config.pc \
     shikra_cqs/Makefile shikra_cqs/config.pc \
-    shikra_iqs/Makefile shikra_iqs/config.pc
+    shikra_iqs/Makefile shikra_iqs/config.pc \
+    Hawi/Makefile Hawi/config.pc
     ])
 
 AC_OUTPUT
