@@ -33,7 +33,7 @@ VENDOR_CONFIG = {
             "<bu>/<chip>/acdbdata/*.acdb,*.qwsp",
         ],
         "exceptions": [
-            "qli/sm8750/*.acdb",  # example: skip a specific file
+            #"qli/sm8750/*.acdb",  # example: skip a specific file
             # "bu1/unknown_dir/",                # example: skip an unexpected dir
         ],
     },
