@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-#!/bin/bash
-# SPDX-License-Identifier: BSD-3-Clause
-#
-# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-
 """
 Validate audioreach-conf folder structure using per-vendor rules.
 
@@ -11,9 +6,6 @@ Each vendor in VENDOR_CONFIG declares:
   required_files  – files that must exist at the vendor root
   file_rules      – one line per allowed file location:
                     <bu>/<chip>/<subdir>/*.ext1,*.ext2
-  exceptions      – relative paths (from vendor root) to skip during validation;
-                    supports * wildcards, e.g. "bu1/chip1/acdbdata/legacy.acdb"
-                    or "bu1/unknown_dir/" to skip an unexpected directory
 
 Usage:
   python3 validate_qcom_conf.py <path/to/repo>
@@ -25,11 +17,6 @@ Usage:
 
 import sys
 import os
-import fnmatch
-
-
-def dbg(msg):
-    print(f"[DEBUG] {msg}", file=sys.stderr)
 
 VENDOR_CONFIG = {
     "qcom": {
@@ -37,30 +24,16 @@ VENDOR_CONFIG = {
         "file_rules": [
             "<bu>/<chip>/acdbdata/*.acdb,*.qwsp",
         ],
-        "exceptions": [
-            #"qli/sm8750/*.acdb",  # example: skip a specific file
-            # "bu1/unknown_dir/",                # example: skip an unexpected dir
-        ],
     },
     "nxp": {
         "required_files": ["kvh2xml.h"],
         "file_rules": [
             "<bu>/acdbdata/*.acdb,*.qwsp",
         ],
-        "exceptions": [],
     },
 }
 
 VENDORS = tuple(VENDOR_CONFIG)
-
-
-def is_exception(rel_path, exceptions):
-    """Return True if rel_path matches any exception pattern (supports * wildcards)."""
-    normalized = rel_path.replace(os.sep, "/")
-    for pattern in exceptions:
-        if fnmatch.fnmatch(normalized, pattern.rstrip("/")):
-            return True
-    return False
 
 
 def subdirs(path):
@@ -134,12 +107,11 @@ def matches_rule(rel_parts, rule):
     )
 
 
-def check_calib_file_locations(vendor_path, parsed_rules, exceptions, failures):
+def check_calib_file_locations(vendor_path, parsed_rules, failures):
     vendor_name = os.path.basename(vendor_path)
     all_exts = {ext for rule in parsed_rules for ext in rule["exts"]}
 
     for root, _dirs, files in os.walk(vendor_path):
-        before = len(failures)
         for fname in files:
             ext = os.path.splitext(fname)[1]
             if ext not in all_exts:
@@ -147,76 +119,51 @@ def check_calib_file_locations(vendor_path, parsed_rules, exceptions, failures):
             file_path = os.path.join(root, fname)
             rel_parts = os.path.relpath(file_path, vendor_path).split(os.sep)
             if any(matches_rule(rel_parts, rule) for rule in parsed_rules):
-                dbg(f"  Checking file: {file_path} ... PASS")
-                continue
-            rel_path = os.path.relpath(file_path, vendor_path)
-            if is_exception(rel_path, exceptions):
-                dbg(f"  Checking file: {file_path} ... SKIP (exception)")
                 continue
             valid = ", ".join(
                 rule_to_path(vendor_name, r)
                 for r in parsed_rules if ext in r["exts"]
             )
-            dbg(f"  Checking file: {file_path} ... FAIL")
             failures.append(
                 f"WRONG LOCATION  {file_path}\n"
                 f"              expected inside {valid}"
             )
-        dbg(f"Scanning directory: {root} ... {'PASS' if len(failures) == before else 'FAIL'}")
 
 
-def check_dir_structure(vendor_path, required_files, parsed_rules, exceptions, failures):
+def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
     for entry in required_files:
         wildcard_depth, suffix = parse_required_entry(entry)
         for parent_path in walk_to_depth(vendor_path, wildcard_depth):
             target = os.path.join(parent_path, suffix)
             if not os.path.isfile(target):
-                rel_path = os.path.relpath(target, vendor_path)
-                if is_exception(rel_path, exceptions):
-                    dbg(f"Checking required file: {target} ... SKIP (exception)")
-                else:
-                    dbg(f"Checking required file: {target} ... FAIL")
-                    failures.append(f"MISSING  {target}")
-            else:
-                dbg(f"Checking required file: {target} ... PASS")
+                failures.append(f"MISSING  {target}")
 
     for parent_depth, allowed_leaves in derive_depth_leaves(parsed_rules).items():
         for parent_path in walk_to_depth(vendor_path, parent_depth):
-            before = len(failures)
             for d in subdirs(parent_path):
                 if d not in allowed_leaves:
-                    rel_path = os.path.relpath(os.path.join(parent_path, d), vendor_path)
-                    if is_exception(rel_path, exceptions):
-                        dbg(f"  Unexpected dir: {parent_path}/{d}/ ... SKIP (exception)")
-                    else:
-                        failures.append(
-                            f"UNEXPECTED DIR  {parent_path}/{d}/  "
-                            f"(allowed: {', '.join(sorted(allowed_leaves))})"
-                        )
+                    failures.append(
+                        f"UNEXPECTED DIR  {parent_path}/{d}/  "
+                        f"(allowed: {', '.join(sorted(allowed_leaves))})"
+                    )
             for leaf in allowed_leaves:
                 leaf_path = os.path.join(parent_path, leaf)
                 if os.path.isdir(leaf_path):
                     for d in subdirs(leaf_path):
-                        rel_path = os.path.relpath(os.path.join(leaf_path, d), vendor_path)
-                        if is_exception(rel_path, exceptions):
-                            dbg(f"  Unexpected subdir: {leaf_path}/{d}/ ... SKIP (exception)")
-                        else:
-                            failures.append(
-                                f"UNEXPECTED DIR  {leaf_path}/{d}/  "
-                                f"({leaf}/ must be flat, no subdirs)"
-                            )
-            dbg(f"Scanning directory structure: {parent_path} ... {'PASS' if len(failures) == before else 'FAIL'}")
+                        failures.append(
+                            f"UNEXPECTED DIR  {leaf_path}/{d}/  "
+                            f"({leaf}/ must be flat, no subdirs)"
+                        )
 
 
 def validate_vendor(vendor_path):
     name = os.path.basename(vendor_path)
     cfg = VENDOR_CONFIG.get(name, VENDOR_CONFIG["qcom"])
     parsed_rules = parse_rules(cfg["file_rules"])
-    exceptions = cfg.get("exceptions", [])
 
     failures = []
-    check_dir_structure(vendor_path, cfg["required_files"], parsed_rules, exceptions, failures)
-    check_calib_file_locations(vendor_path, parsed_rules, exceptions, failures)
+    check_dir_structure(vendor_path, cfg["required_files"], parsed_rules, failures)
+    check_calib_file_locations(vendor_path, parsed_rules, failures)
     return failures
 
 
@@ -240,7 +187,6 @@ def run(path):
 
     all_failures = {}
     for vp in vendor_paths:
-        dbg(f"Validating vendor: {vp}")
         failures = validate_vendor(vp)
         if failures:
             all_failures[os.path.basename(vp)] = failures
