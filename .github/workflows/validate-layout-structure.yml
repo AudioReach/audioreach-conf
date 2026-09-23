@@ -2,6 +2,12 @@ name: Validate Conf Structure
 
 on:
   workflow_dispatch:
+
+  push:
+    branches: [ci]
+    paths-ignore:
+      - '.github/**'
+
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [ci]
