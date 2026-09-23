@@ -6,6 +6,9 @@ Each vendor in VENDOR_CONFIG declares:
   required_files  – files that must exist at the vendor root
   file_rules      – one line per allowed file location:
                     <bu>/<chip>/<subdir>/*.ext1,*.ext2
+  exceptions      – relative paths (from vendor root) to skip during validation;
+                    supports * wildcards, e.g. "bu1/chip1/acdbdata/legacy.acdb"
+                    or "bu1/unknown_dir/" to skip an unexpected directory
 
 Usage:
   python3 validate_qcom_conf.py <path/to/repo>
@@ -17,6 +20,7 @@ Usage:
 
 import sys
 import os
+import fnmatch
 
 
 def dbg(msg):
@@ -28,16 +32,30 @@ VENDOR_CONFIG = {
         "file_rules": [
             "<bu>/<chip>/acdbdata/*.acdb,*.qwsp",
         ],
+        "exceptions": [
+            "./qcom/qli/sm8750/*.acdb",  # example: skip a specific file
+            # "bu1/unknown_dir/",                # example: skip an unexpected dir
+        ],
     },
     "nxp": {
         "required_files": ["kvh2xml.h"],
         "file_rules": [
             "<bu>/acdbdata/*.acdb,*.qwsp",
         ],
+        "exceptions": [],
     },
 }
 
 VENDORS = tuple(VENDOR_CONFIG)
+
+
+def is_exception(rel_path, exceptions):
+    """Return True if rel_path matches any exception pattern (supports * wildcards)."""
+    normalized = rel_path.replace(os.sep, "/")
+    for pattern in exceptions:
+        if fnmatch.fnmatch(normalized, pattern.rstrip("/")):
+            return True
+    return False
 
 
 def subdirs(path):
@@ -111,7 +129,7 @@ def matches_rule(rel_parts, rule):
     )
 
 
-def check_calib_file_locations(vendor_path, parsed_rules, failures):
+def check_calib_file_locations(vendor_path, parsed_rules, exceptions, failures):
     vendor_name = os.path.basename(vendor_path)
     all_exts = {ext for rule in parsed_rules for ext in rule["exts"]}
 
@@ -126,6 +144,10 @@ def check_calib_file_locations(vendor_path, parsed_rules, failures):
             if any(matches_rule(rel_parts, rule) for rule in parsed_rules):
                 dbg(f"  Checking file: {file_path} ... PASS")
                 continue
+            rel_path = os.path.relpath(file_path, vendor_path)
+            if is_exception(rel_path, exceptions):
+                dbg(f"  Checking file: {file_path} ... SKIP (exception)")
+                continue
             valid = ", ".join(
                 rule_to_path(vendor_name, r)
                 for r in parsed_rules if ext in r["exts"]
@@ -138,14 +160,18 @@ def check_calib_file_locations(vendor_path, parsed_rules, failures):
         dbg(f"Scanning directory: {root} ... {'PASS' if len(failures) == before else 'FAIL'}")
 
 
-def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
+def check_dir_structure(vendor_path, required_files, parsed_rules, exceptions, failures):
     for entry in required_files:
         wildcard_depth, suffix = parse_required_entry(entry)
         for parent_path in walk_to_depth(vendor_path, wildcard_depth):
             target = os.path.join(parent_path, suffix)
             if not os.path.isfile(target):
-                dbg(f"Checking required file: {target} ... FAIL")
-                failures.append(f"MISSING  {target}")
+                rel_path = os.path.relpath(target, vendor_path)
+                if is_exception(rel_path, exceptions):
+                    dbg(f"Checking required file: {target} ... SKIP (exception)")
+                else:
+                    dbg(f"Checking required file: {target} ... FAIL")
+                    failures.append(f"MISSING  {target}")
             else:
                 dbg(f"Checking required file: {target} ... PASS")
 
@@ -154,18 +180,26 @@ def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
             before = len(failures)
             for d in subdirs(parent_path):
                 if d not in allowed_leaves:
-                    failures.append(
-                        f"UNEXPECTED DIR  {parent_path}/{d}/  "
-                        f"(allowed: {', '.join(sorted(allowed_leaves))})"
-                    )
+                    rel_path = os.path.relpath(os.path.join(parent_path, d), vendor_path)
+                    if is_exception(rel_path, exceptions):
+                        dbg(f"  Unexpected dir: {parent_path}/{d}/ ... SKIP (exception)")
+                    else:
+                        failures.append(
+                            f"UNEXPECTED DIR  {parent_path}/{d}/  "
+                            f"(allowed: {', '.join(sorted(allowed_leaves))})"
+                        )
             for leaf in allowed_leaves:
                 leaf_path = os.path.join(parent_path, leaf)
                 if os.path.isdir(leaf_path):
                     for d in subdirs(leaf_path):
-                        failures.append(
-                            f"UNEXPECTED DIR  {leaf_path}/{d}/  "
-                            f"({leaf}/ must be flat, no subdirs)"
-                        )
+                        rel_path = os.path.relpath(os.path.join(leaf_path, d), vendor_path)
+                        if is_exception(rel_path, exceptions):
+                            dbg(f"  Unexpected subdir: {leaf_path}/{d}/ ... SKIP (exception)")
+                        else:
+                            failures.append(
+                                f"UNEXPECTED DIR  {leaf_path}/{d}/  "
+                                f"({leaf}/ must be flat, no subdirs)"
+                            )
             dbg(f"Scanning directory structure: {parent_path} ... {'PASS' if len(failures) == before else 'FAIL'}")
 
 
@@ -173,10 +207,11 @@ def validate_vendor(vendor_path):
     name = os.path.basename(vendor_path)
     cfg = VENDOR_CONFIG.get(name, VENDOR_CONFIG["qcom"])
     parsed_rules = parse_rules(cfg["file_rules"])
+    exceptions = cfg.get("exceptions", [])
 
     failures = []
-    check_dir_structure(vendor_path, cfg["required_files"], parsed_rules, failures)
-    check_calib_file_locations(vendor_path, parsed_rules, failures)
+    check_dir_structure(vendor_path, cfg["required_files"], parsed_rules, exceptions, failures)
+    check_calib_file_locations(vendor_path, parsed_rules, exceptions, failures)
     return failures
 
 
