@@ -116,24 +116,26 @@ def check_calib_file_locations(vendor_path, parsed_rules, failures):
     all_exts = {ext for rule in parsed_rules for ext in rule["exts"]}
 
     for root, _dirs, files in os.walk(vendor_path):
-        dbg(f"Scanning directory: {root}")
+        before = len(failures)
         for fname in files:
             ext = os.path.splitext(fname)[1]
             if ext not in all_exts:
                 continue
             file_path = os.path.join(root, fname)
-            dbg(f"  Checking file: {file_path}")
             rel_parts = os.path.relpath(file_path, vendor_path).split(os.sep)
             if any(matches_rule(rel_parts, rule) for rule in parsed_rules):
+                dbg(f"  Checking file: {file_path} ... PASS")
                 continue
             valid = ", ".join(
                 rule_to_path(vendor_name, r)
                 for r in parsed_rules if ext in r["exts"]
             )
+            dbg(f"  Checking file: {file_path} ... FAIL")
             failures.append(
                 f"WRONG LOCATION  {file_path}\n"
                 f"              expected inside {valid}"
             )
+        dbg(f"Scanning directory: {root} ... {'PASS' if len(failures) == before else 'FAIL'}")
 
 
 def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
@@ -141,13 +143,15 @@ def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
         wildcard_depth, suffix = parse_required_entry(entry)
         for parent_path in walk_to_depth(vendor_path, wildcard_depth):
             target = os.path.join(parent_path, suffix)
-            dbg(f"Checking required file: {target}")
             if not os.path.isfile(target):
+                dbg(f"Checking required file: {target} ... FAIL")
                 failures.append(f"MISSING  {target}")
+            else:
+                dbg(f"Checking required file: {target} ... PASS")
 
     for parent_depth, allowed_leaves in derive_depth_leaves(parsed_rules).items():
         for parent_path in walk_to_depth(vendor_path, parent_depth):
-            dbg(f"Scanning directory structure: {parent_path}")
+            before = len(failures)
             for d in subdirs(parent_path):
                 if d not in allowed_leaves:
                     failures.append(
@@ -162,6 +166,7 @@ def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
                             f"UNEXPECTED DIR  {leaf_path}/{d}/  "
                             f"({leaf}/ must be flat, no subdirs)"
                         )
+            dbg(f"Scanning directory structure: {parent_path} ... {'PASS' if len(failures) == before else 'FAIL'}")
 
 
 def validate_vendor(vendor_path):
