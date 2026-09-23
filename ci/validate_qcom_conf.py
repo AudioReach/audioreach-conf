@@ -18,6 +18,10 @@ Usage:
 import sys
 import os
 
+
+def dbg(msg):
+    print(f"[DEBUG] {msg}", file=sys.stderr)
+
 VENDOR_CONFIG = {
     "qcom": {
         "required_files": ["kvh2xml.h"],
@@ -112,11 +116,13 @@ def check_calib_file_locations(vendor_path, parsed_rules, failures):
     all_exts = {ext for rule in parsed_rules for ext in rule["exts"]}
 
     for root, _dirs, files in os.walk(vendor_path):
+        dbg(f"Scanning directory: {root}")
         for fname in files:
             ext = os.path.splitext(fname)[1]
             if ext not in all_exts:
                 continue
             file_path = os.path.join(root, fname)
+            dbg(f"  Checking file: {file_path}")
             rel_parts = os.path.relpath(file_path, vendor_path).split(os.sep)
             if any(matches_rule(rel_parts, rule) for rule in parsed_rules):
                 continue
@@ -135,11 +141,13 @@ def check_dir_structure(vendor_path, required_files, parsed_rules, failures):
         wildcard_depth, suffix = parse_required_entry(entry)
         for parent_path in walk_to_depth(vendor_path, wildcard_depth):
             target = os.path.join(parent_path, suffix)
+            dbg(f"Checking required file: {target}")
             if not os.path.isfile(target):
                 failures.append(f"MISSING  {target}")
 
     for parent_depth, allowed_leaves in derive_depth_leaves(parsed_rules).items():
         for parent_path in walk_to_depth(vendor_path, parent_depth):
+            dbg(f"Scanning directory structure: {parent_path}")
             for d in subdirs(parent_path):
                 if d not in allowed_leaves:
                     failures.append(
@@ -187,6 +195,7 @@ def run(path):
 
     all_failures = {}
     for vp in vendor_paths:
+        dbg(f"Validating vendor: {vp}")
         failures = validate_vendor(vp)
         if failures:
             all_failures[os.path.basename(vp)] = failures
