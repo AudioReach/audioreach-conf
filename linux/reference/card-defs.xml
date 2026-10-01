@@ -53,13 +53,21 @@
         </props>
     </pcm-device>
 
-     <pcm-device>
-         <id>200</id>
-         <name>PCM_RT_PROXY-RX-2</name>
-         <props>
-             <backend>1</backend>
-         </props>
-     </pcm-device>
+    <pcm-device>
+        <id>200</id>
+        <name>PCM_RT_PROXY-RX-2</name>
+        <props>
+            <backend>1</backend>
+        </props>
+    </pcm-device>
+
+    <pcm-device>
+        <id>201</id>
+        <name>PCM_RT_PROXY-TX-2</name>
+        <props>
+            <backend>1</backend>
+        </props>
+    </pcm-device>
 
     <mixer>
         <id>1</id>
