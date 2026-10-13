@@ -567,6 +567,7 @@ enum Key_Values_Stream_Config {
     STREAM_CFG_ASR_CUSTOM   = 0xBC00000A,   /**< @h2xmle_name {ASR_Custom}*/
     STREAM_CFG_SDZ_QC       = 0xBC00000B,   /**< @h2xmle_name {SDZ_QC}*/
     STREAM_CFG_HIST_CAP     = 0xBC00000C,   /**< @h2xmle_name {HIST_CAP}*/
+    STREAM_CFG_ASR_OFFLOAD  = 0xBC00000D,   /**< @h2xmle_name {ASR_Offload}*/
 };
 
 /**
