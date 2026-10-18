@@ -47,7 +47,8 @@ AC_CONFIG_FILES([ \
     nord/Makefile nord/config.pc \
     shikra_cqs/Makefile shikra_cqs/config.pc \
     shikra_iqs/Makefile shikra_iqs/config.pc \
-    HAWI/Makefile
+    HAWI/Makefile \
+    arduino_monza/Makefile arduino_monza/config.pc
     ])
 
 AC_OUTPUT
