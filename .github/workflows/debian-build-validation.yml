@@ -1,0 +1,41 @@
+name: Debian Build Validation
+
+# Build the Debian packages from this tree using the packaging in
+# qualcomm-linux/pkg-audioreach-conf, to catch breakage before release.
+on:
+  push:
+    branches: [ci]
+  pull_request:
+    branches: [ci]
+  workflow_dispatch:
+    inputs:
+      pkg_ref:
+        description: Packaging branch/tag in pkg-audioreach-conf
+        type: string
+        default: qli/debian/latest
+
+permissions:
+  contents: read
+
+jobs:
+  debian-build:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Install git
+        run: apt-get update -qq && apt-get install -y -qq git ca-certificates
+
+      - uses: actions/checkout@v4
+
+      - name: Build Debian packages
+        env:
+          PKG_REF: ${{ inputs.pkg_ref || 'qli/debian/latest' }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          ci/debian_build.sh "$GITHUB_WORKSPACE" "$RUNNER_TEMP/debs"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: debian-packages
+          path: ${{ runner.temp }}/debs
