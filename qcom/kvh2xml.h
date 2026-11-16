@@ -139,6 +139,7 @@ enum Key_Values_DeviceRX {
     SPEAKER_TDM             = 0xA200000D,   /**< @h2xmle_name {Speaker_TDM} @h2xmle_description {Subgraph for TDM backend for speaker}*/
     SPEAKER_I2S             = 0xA200000E,   /**< @h2xmle_name {Speaker_I2S} @h2xmle_description {Subgraph for I2S backend for speaker}*/
     SOUNDDOSECOMPUTATION    = 0xA2000012,   /**< @h2xmle_name {SoundDoseComputation} @h2xmle_description {Sub-graph to calculate Sound Dose Mel values for each of the RX device for Sound Dose calculation.}*/
+    DP_RX                   = 0xA2000013,   /**< @h2xmle_name {DP_RX} @h2xmle_description {Subgraph for eDP backend for DISPLAY-PORT}*/
     HFP_RX                  = 0xA2000014,   /**< @h2xmle_name {HFP_RX} @h2xmle_description {two pairs of SCO links are needed, so need to add HFP RX device}*/
     USB_RX_IMMUTABLE        = 0xA2000015,   /**< @h2xmle_name {USB_RX_IMMUTABLE} @h2xmle_description {Subgraph for USB RX immutable playback}*/
 };
