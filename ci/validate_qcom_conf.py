@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+#!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+
 """
 Validate audioreach-conf folder structure using per-vendor rules.
 
