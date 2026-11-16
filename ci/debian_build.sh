@@ -10,6 +10,7 @@
 # Usage: ci/debian_build.sh <source-dir> <out-dir>
 # Env:   PKG_REPO (default qualcomm-linux/pkg-audioreach-conf)
 #        PKG_REF  (default qli/debian/latest)
+#        PKG_DIR  local packaging checkout, overrides PKG_REPO/PKG_REF
 
 set -euo pipefail
 
@@ -28,7 +29,11 @@ WORK=$(mktemp -d)
 mkdir -p "$OUT"
 
 # Fetch the packaging.
-git clone -q --depth 1 -b "$PKG_REF" "https://github.com/${PKG_REPO}.git" "$WORK/pkg"
+if [ -n "${PKG_DIR:-}" ]; then
+    cp -r "$PKG_DIR" "$WORK/pkg"
+else
+    git clone -q --depth 1 -b "$PKG_REF" "https://github.com/${PKG_REPO}.git" "$WORK/pkg"
+fi
 
 # Version comes from the source tree being validated.
 VER=$(sed -n 's/^AC_INIT(\[audioreach-conf\],\s*\([0-9.]*\)).*/\1/p' "$SRC/configure.ac")
