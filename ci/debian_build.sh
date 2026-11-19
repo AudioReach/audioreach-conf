@@ -69,3 +69,4 @@ lintian --no-tag-display-limit --display-info "$OUT"/*.changes | tee "$OUT/linti
 ! grep -q '^E:' "$OUT/lintian.log"
 
 # CI test: trigger the Debian build validation
+# dummy commit 2
