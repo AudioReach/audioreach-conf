@@ -67,3 +67,6 @@ echo "=== lintian ==="
 lintian --no-tag-display-limit --display-info "$OUT"/*.changes | tee "$OUT/lintian.log" || true
 # Only errors fail the job; warnings are informational.
 ! grep -q '^E:' "$OUT/lintian.log"
+
+# CI test: trigger the Debian build validation
+# dummy commit 2
