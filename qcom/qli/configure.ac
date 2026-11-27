@@ -49,7 +49,8 @@ AC_CONFIG_FILES([ \
     shikra_iqs/Makefile shikra_iqs/config.pc \
     HAWI/Makefile \
     MAILI/Makefile \
-    arduino_monza/Makefile
+    arduino_monza/Makefile \
+    talos_lyra/Makefile
     ])
 
 AC_OUTPUT
