@@ -26,3 +26,5 @@ for instructions to use audioreach-conf on OpenEmbedded system.
 
 ## License
 audioreach-conf is licensed under the BSD-3-Clause. Check out the [LICENSE](LICENSE) for more details.
+
+<!-- Dummy change to test the test result reporting, do not merge. -->
